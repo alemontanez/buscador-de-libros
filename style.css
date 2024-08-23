@@ -10,7 +10,7 @@ body {
     justify-content: center;
     background-color: rgb(44, 87, 186);
     color: white;
-    padding: 12px 0;
+    padding: 16px 0;
 }
 
 .navbar button {
@@ -18,9 +18,11 @@ body {
     border: none;
     color: inherit;
     font-family: inherit;
+    font-size: large;
+    font-weight: 500;
     border-radius: 10px;
     cursor: pointer;
-    padding: 0 18px
+    padding: 0 18px;
 }
 
 .navbar button:hover {
@@ -31,26 +33,31 @@ body {
     border: none;
     border-radius: 10px;
     width: 40%;
-    padding: 10px;
+    padding: 14px;
     font-family: inherit;
+    font-size: large;
 }
 
 #container {
-    margin: 40px 10%;
+    margin: 40px 8%;
 }
 
 #books-list {
     list-style: none;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px 20px;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(250px, 1fr)
+    );
+    gap: 50px 2%;
 }
 
 .book-card {
     display: flex;
+    max-width: 300px;
     flex-direction: column;
-    padding: 0 40px;
+    padding: 20px 20px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
     border-radius: 10px;
     background-color: rgb(244, 244, 244);
@@ -64,11 +71,19 @@ body {
     margin: 0;
 }
 
-/* .book-card p {
-    margin-top
-} */
+#pagination-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 80px 0;
+    justify-content: center;
+}
 
-
-
-
+#pagination-list li {
+    padding: 6px 16px;
+    margin: 5px;
+    background-color: rgb(44, 87, 186);
+    border-radius: 8px;
+    color: white;
+}
 
