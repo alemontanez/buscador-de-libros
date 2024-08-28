@@ -16,17 +16,18 @@
         <section id="container">
             <h2 id="title">Libros recomendados:</h2>
             <ul id="books-list"></ul>
-            <ul id="pagination-list">
-                <li>Prev</li>
-                <li>1</li>
-                <li>2</li>
-                <li>3</li>
-                <li>Next</li>
-            </ul>
-            <template id="pagination-template">
-            </template>
-
         </section>
+        <template id="template">
+            <ul id="pagination-list">
+                <li id="prev-page-button">&lt;</li>
+                <li id="first-page-button">1</li>
+                <li class="pages">1</li>
+                <li class="pages">2</li>
+                <li class="pages">3</li>
+                <li id="last-page-button">final</li>
+                <li id="next-page-button">&gt;</li>
+            </ul>
+        </template>
     </main>
     <script src="./main.js"></script>
 </body>
