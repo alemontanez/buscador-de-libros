@@ -11,32 +11,19 @@ const executeSearch = async(search, page = 1) => {
     const formattedSearch = search.trim().replaceAll(' ', '-')
     if (formattedSearch === '') return
     
+    title.textContent = 'Cargando...'
     const url = getFormattedSearch(formattedSearch, page)
     const data = await getBooksData(url)
     if (data) {
         renderBooks(data, url, data.total, formattedSearch, page)
     }
-    // Despejamos la barra de búsqueda.
+    // Se despeja la barra de búsqueda.
     input.value = ''
-    window.scrollTo(0, 0)
-    console.log('Current url:', url)
 }
 
 const getFormattedSearch = (search, page) => {
     return `https://api.itbook.store/1.0/search/${search}/${page}`
 }
-
-// Listeners Click y Enter para labarra  de búsqueda.
-searchButton.addEventListener('click', () => {
-    title.textContent = 'Cargando...'
-    executeSearch(input.value, 1)
-})
-input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        title.textContent = 'Cargando...'
-        executeSearch(input.value, 1)
-    }
-})
 
 // { 2 }
 // Realizamos el fetch de la api con nuestra url dinámica.
@@ -44,9 +31,13 @@ const getBooksData = async(url) => {
     try {
         const response = await fetch(url)
         const data = await response.json()
+        if (data.error !== '0') {
+            throw new Error('Ocurrió un error con la api: ', data.error)
+        }
         return data
     } catch (error) {
         console.error(error)
+        title.textContent = 'Ocurrió un error al intentar obtener la información de la base de datos.'
     }
 }
 
@@ -67,30 +58,36 @@ const renderBooks = (data, url, totalBooks, search, currentPage) => {
             renderBookCards(data.books)
 
             renderPagination()
+            updateCurrentPagesButtons(currentPage, totalPages)
             const lastPageButton = document.getElementById('last-page-button')
             lastPageButton.textContent = totalPages
+            activeCurrentPage(currentPage)
 
             // Lógica para el funcionamiento de los botones, con delegación de eventos.
             const paginationList = document.getElementById('pagination-list')
             paginationList.addEventListener('click', (e) => {
-                if (e.target.matches('#prev-page-button')) {
-                    if (currentPage > 1) {
+                if (e.target.matches('li')) {
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth' // Transición suave
+                        })
+                    }, 500)
+
+                    if (e.target.matches('#prev-page-button') && currentPage > 1) {
                         executeSearch(search, currentPage - 1)
                     }
-                }
-                if (e.target.matches('#next-page-button')) {
-                    if (currentPage < totalPages) {
+                    if (e.target.matches('#next-page-button') && currentPage < totalPages) {
                         executeSearch(search, currentPage + 1)
                     }
-                }
-                if (e.target.matches('#first-page-button')) {
-                    if (currentPage !== 1) {
+                    if (e.target.matches('#first-page-button') && currentPage !== 1) {
                         executeSearch(search, 1)
                     }
-                }
-                if (e.target.matches('#last-page-button')) {
-                    if (currentPage !== totalPages) {
+                    if (e.target.matches('#last-page-button') && currentPage !== totalPages) {
                         executeSearch(search, totalPages)
+                    }
+                    if (e.target.matches('.current-pages-buttons')) {
+                        executeSearch(search, parseInt(e.target.textContent))
                     }
                 }
             })
@@ -104,6 +101,32 @@ const renderPagination = () => {
     }
     const paginationClone = paginationTemplate.content.cloneNode(true)
     container.appendChild(paginationClone)
+    
+}
+
+const updateCurrentPagesButtons = (currentPage, totalPages) => {
+    const buttons = document.getElementsByClassName('current-pages-buttons')
+    for (let i = 0; i < buttons.length; i++) {
+        if (currentPage === 1 || currentPage === 2) {
+            buttons[i].textContent = i + 2
+        } else if (currentPage === totalPages) {
+            buttons[i].textContent = currentPage - 3 + i
+        } else if (currentPage === totalPages - 1) {
+            buttons[i].textContent = currentPage - 2 + i
+        } else {
+            buttons[i].textContent = currentPage - 1 + i
+        }
+    }
+}
+
+// Botón de la paginación activo
+const activeCurrentPage = (current) => {
+    const paginationButtons = document.getElementsByClassName('pagination-buttons')
+    for (let button of paginationButtons) {
+        if (button.textContent == current) {
+            button.classList.add('pagination-active')
+        }
+    }
 }
 
 // { 4 }
@@ -121,6 +144,16 @@ const renderBookCards = (books) => {
     })
     booksList.appendChild(fragment)
 }
+
+// Listeners Click y Enter para la barra  de búsqueda.
+searchButton.addEventListener('click', () => {
+    executeSearch(input.value, 1)
+})
+input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        executeSearch(input.value, 1)
+    }
+})
 
 // { 0 }
 // Render al cargar la página por primera vez.
