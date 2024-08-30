@@ -4,6 +4,7 @@ const searchButton = document.getElementById('search')
 const input = document.getElementById('input')
 const title = document.getElementById('title')
 const paginationTemplate = document.getElementById('template')
+const homeButton = document.getElementById('home')
 
 // { 1 }
 // Función que procesa la búsqueda solicitada desde el navbar.
@@ -105,19 +106,31 @@ const renderPagination = () => {
 }
 
 const updateCurrentPagesButtons = (currentPage, totalPages) => {
-    const buttons = document.getElementsByClassName('current-pages-buttons')
+    let buttons = document.getElementsByClassName('current-pages-buttons')
+
     for (let i = 0; i < buttons.length; i++) {
-        if (currentPage === 1 || currentPage === 2) {
-            buttons[i].textContent = i + 2
-        } else if (currentPage === totalPages) {
-            buttons[i].textContent = currentPage - 3 + i
-        } else if (currentPage === totalPages - 1) {
-            buttons[i].textContent = currentPage - 2 + i
+        if (i+2 < totalPages) {
+            // Mostrar y actualizar el texto de los botones visibles.
+            buttons[i].classList.remove('hidden')
+            if (currentPage === 1 || currentPage === 2) {
+                buttons[i].textContent = i + 2
+            } else if (currentPage === totalPages) {
+                buttons[i].textContent = currentPage - 3 + i
+            } else if (currentPage === totalPages - 1) {
+                buttons[i].textContent = currentPage - 2 + i
+            } else {
+                buttons[i].textContent = currentPage - 1 + i
+            }
         } else {
-            buttons[i].textContent = currentPage - 1 + i
+            // Ocultar los botones que no son necesarios.
+            buttons[i].classList.add('hidden')
         }
     }
+    if (totalPages === 1) {
+        document.getElementById('last-page-button').classList.add('hidden')
+    }
 }
+
 
 // Botón de la paginación activo
 const activeCurrentPage = (current) => {
@@ -153,6 +166,14 @@ input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         executeSearch(input.value, 1)
     }
+})
+
+homeButton.addEventListener('click', () => {
+    if (document.getElementById('pagination-list')) {
+        document.getElementById('pagination-list').remove()
+    }
+    initialRender()
+    title.textContent = 'Libros recomendados:'
 })
 
 // { 0 }
